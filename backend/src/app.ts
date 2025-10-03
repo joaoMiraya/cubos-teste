@@ -8,7 +8,7 @@ app.use(express.json());
 
 // Routes
 
-// Global error handler (should be after routes)
+// Middlewares
 app.use(errorHandler);
 
 export default app;
