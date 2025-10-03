@@ -8,7 +8,7 @@ export class Image {
 
     @Column({length: 100, nullable: false })
     name!: string;
-
+    
     @Column({length: 100, nullable: false })
     url!: string;
 

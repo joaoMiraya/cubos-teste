@@ -1,6 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, UpdateDateColumn, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, UpdateDateColumn, ManyToOne, ManyToMany, JoinTable } from "typeorm";
 import { Image } from "./Image";
 import { User } from "./User";
+import { Category } from "./Category";
+import { Rating } from "./Rating";
+import { LanguagesEnum } from "../constants/languageEnum";
 
 @Entity()
 export class Movie {
@@ -19,11 +22,12 @@ export class Movie {
     @Column({type: "date", nullable: false })
     release_date!: Date;
 
-    @Column({length: 50, nullable: false })
-    language!: string;
-
-    @Column({nullable: false, type: "int"})
-    images_id!: number;
+    @Column({
+        type: "enum",
+        enum: LanguagesEnum,
+        nullable: false
+    })
+    language!: LanguagesEnum;
 
     @Column({type: "decimal", precision: 15, scale: 2, nullable: false })
     revenue!: string;
@@ -31,18 +35,22 @@ export class Movie {
     @Column({type: "decimal", precision: 15, scale: 2, nullable: false })
     budget!: string;
 
-    @Column({ type: "int", nullable: false })
-    created_by!: number;
-
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     created_at!: Date;
 
     @UpdateDateColumn({ type: 'timestamp' })
     updated_at!: Date;
 
-    @OneToMany(() => Image, (image) => image.movie, { cascade: true })
+    @OneToMany(() => Image, (image) => image.movie)
     images!: Image[];
 
     @ManyToOne(() => User, (user) => user.movies, { eager: true})
     user!: User;
+
+    @ManyToMany(() => Category, (category) => category.movies)
+    @JoinTable()
+    categories!: Category[];
+
+    @OneToMany(() => Rating, (rating) => rating.movie)
+    ratings!: Rating[];
 }
