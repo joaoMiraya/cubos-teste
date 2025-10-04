@@ -5,7 +5,7 @@ import { Category } from "./Category";
 import { Rating } from "./Rating";
 import { LanguagesEnum } from "../constants/languageEnum";
 
-@Entity()
+@Entity("movies")
 export class Movie {
     @PrimaryGeneratedColumn()
     id!: number;
@@ -41,10 +41,10 @@ export class Movie {
     @UpdateDateColumn({ type: 'timestamp' })
     updated_at!: Date;
 
-    @OneToMany(() => Image, (image) => image.movie)
+    @OneToMany(() => Image, (image) => image.movie, { eager: true })
     images!: Image[];
 
-    @ManyToOne(() => User, (user) => user.movies, { eager: true})
+    @ManyToOne(() => User, (user) => user.movies, { eager: true })
     user!: User;
 
     @ManyToMany(() => Category, (category) => category.movies)
