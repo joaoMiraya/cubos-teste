@@ -10,7 +10,8 @@
     "target": "ES2020",
     "lib": ["ES2020"],
     "types": ["node"],
-
+    "typeRoots": ["./node_modules/@types", "src/@types"],
+    
     // Module Resolution
     "moduleResolution": "node",
     "esModuleInterop": true,
@@ -24,7 +25,7 @@
 
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": false,
 
     // Style Options
     "noImplicitReturns": true,
@@ -44,4 +45,8 @@
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"],
+    "ts-node": {
+    "transpileOnly": false,
+    "files": true
+  }
 }

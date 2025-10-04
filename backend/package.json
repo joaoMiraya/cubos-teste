@@ -8,7 +8,7 @@
     "migration:generate": "ts-node-esm ./node_modules/typeorm/cli.js migration:generate -d src/data-source.ts",
     "migration:run": "ts-node-esm ./node_modules/typeorm/cli.js migration:run -d src/data-source.ts",
     "start": "node dist/server.js",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node --files' src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
