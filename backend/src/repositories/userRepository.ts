@@ -23,6 +23,12 @@ export class UserRepository implements IUserRepository {
     });
   }
 
+  async findByName(name: string): Promise<User | null> {
+    return await this.repository.findOne({
+      where: { name }
+    });
+  }
+
   async create(userData: Partial<User>): Promise<User> {
     return this.repository.create(userData);
   }

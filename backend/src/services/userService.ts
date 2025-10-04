@@ -32,12 +32,22 @@ export class UserService {
     return user;
   }
 
+  async getUserByName(name: string): Promise<User> {
+    const user = await this.userRepository.findByName(name);
+
+    if (!user) {
+      return User.createWithError('User not found', 'name');
+    }
+
+    return user;
+  }
+
   async createUser(data: CreateUserDTO): Promise<User> {
     const userExists = await this.userRepository.findByEmail(data.email);
     
     if (userExists) {
       if (userExists.is_active) {
-        return User.createWithError('Email already registered', 'email');
+        return User.createWithError('Email já cadastrado.', 'email');
       }
 
       userExists.is_active = true;

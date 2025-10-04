@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/authService';
 import { UserService } from '../services/userService';
+import { validateEmail } from '../shared/validators';
 
 const authService = new AuthService();
 
@@ -22,7 +23,7 @@ export class AuthController {
       });
 
       res.json({
-        message: 'Success login',
+        message: 'Success registration',
         user: {
           id: user.id,
           email: user.email,
@@ -44,8 +45,14 @@ export class AuthController {
         res.status(400).json({ error: 'Email and password are required' });
         return;
       }
-
-       const user = await this.userService.getUserByEmail(email);
+      const isEmail = validateEmail(email);
+      let user;
+      
+      if (isEmail) {
+        user = await this.userService.getUserByEmail(email);
+      } else {
+        user = await this.userService.getUserByName(email);
+      }
       
       if (!user) {
         res.status(401).json({ error: 'Invalid credentials' });

@@ -9,7 +9,7 @@ export class User extends NotifiableEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({length: 100, nullable: false })
+    @Column({length: 100, nullable: false, unique: true })
     name!: string;
 
     @Column({ unique: true, length: 100, nullable: false })
@@ -31,7 +31,7 @@ export class User extends NotifiableEntity {
         }
     }
 
-    @Column({ default: true, select: false})
+    @Column({ default: true})
     is_active!: boolean;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
