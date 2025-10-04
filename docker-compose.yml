@@ -4,17 +4,16 @@ services:
     container_name: postgres_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: cubos_user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: cubos_db
+      POSTGRES_PASSWORD: rootpassword
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
     networks:
       - app_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cubos_user"]
+      test: ["CMD-SHELL", "pg_isready -U cubos_user -d cubos_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,7 +22,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: node_api
+    container_name: express_api
     restart: unless-stopped
     environment:
       NODE_ENV: development

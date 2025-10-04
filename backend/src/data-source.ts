@@ -2,6 +2,9 @@ import { DataSource } from "typeorm";
 import { User } from "./entities/User";
 import { Movie } from "./entities/Movie";
 import config from "./config/config";
+import { Rating } from "./entities/Rating";
+import { Image } from "./entities/Image";
+import { Category } from "./entities/Category";
 
 export const AppDataSource = new DataSource({
     type: config.database.type,
@@ -10,10 +13,10 @@ export const AppDataSource = new DataSource({
     username: config.database.username,
     password: config.database.password,
     database: config.database.database,
-    synchronize: true,
+    synchronize: false,
     logging: true,
-    entities: [User, Movie],
+    entities: [User, Movie, Category, Image, Rating],
     subscribers: [],
-    migrations: [],
+    migrations: ["src/migrations/*.ts"],
 })
 
