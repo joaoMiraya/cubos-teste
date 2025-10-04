@@ -63,6 +63,8 @@ const config: Config = {
   jwt: {
     secret: getRequiredEnvVar('JWT_SECRET'),
     expiresIn: process.env.JWT_EXPIRES_IN || '24h',
+    refreshSecret: getRequiredEnvVar('JWT_REFRESH_SECRET'),
+    refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   },
   cors: {
     origins: getCorsOrigins(),

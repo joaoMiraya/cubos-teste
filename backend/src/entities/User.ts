@@ -15,7 +15,7 @@ export class User extends NotifiableEntity {
     @Column({ unique: true, length: 100, nullable: false })
     email!: string;
 
-    @Column({ type: "varchar", length: 255, nullable: false, select: false })
+    @Column({ type: "varchar", length: 255, nullable: false })
     password!: string;
 
     @BeforeInsert()
@@ -31,7 +31,7 @@ export class User extends NotifiableEntity {
         }
     }
 
-    @Column({ default: true })
+    @Column({ default: true, select: false})
     is_active!: boolean;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
