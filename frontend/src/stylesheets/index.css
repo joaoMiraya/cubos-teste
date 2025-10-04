@@ -1,0 +1,148 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --color-purple-d-01: #18111B;
+    --color-purple-d-02: #1E1523;
+    --color-purple-d-03: #3D224E;
+    --color-purple-d-04: #3D224E;
+    --color-purple-d-05: #48295C;
+    --color-purple-d-06: #54346B;
+    --color-purple-d-07: #664282;
+    --color-purple-d-08: #8457AA;
+    --color-purple-d-09: #8E4EC6;
+    --color-purple-d-10: #9A5CD0;
+    --color-purple-d-11: #D19DFF;
+    --color-purple-d-12: #ECD9FA;
+
+    --color-purple-da-01: #B412F90B;
+    --color-purple-da-02: #B744F714;
+    --color-purple-da-03: #C150FF2D;
+    --color-purple-da-04: #BB53FD42;
+    --color-purple-da-05: #BE5CFD51;
+    --color-purple-da-06: #C16DFD61;
+    --color-purple-da-07: #C378FD7A;
+    --color-purple-da-08: #C47EFFA4;
+    --color-purple-da-09: #B661FFC2;
+    --color-purple-da-10: #BC6FFFCD;
+    --color-purple-da-11: #D19DFF;
+    --color-purple-da-12: #F1DDFFFA;
+
+    --color-purple-01: #FEFCFE;
+    --color-purple-02: #FBF7FE;
+    --color-purple-03: #F7EDFE;
+    --color-purple-04: #F2E2FC;
+    --color-purple-05: #EAD5F9;
+    --color-purple-06: #E0C4F4;
+    --color-purple-07: #D1AFEC;
+    --color-purple-08: #BE93E4;
+    --color-purple-09: #8E4EC6;
+    --color-purple-10: #8347B9;
+    --color-purple-11: #8145B5;
+    --color-purple-12: #402060;
+
+    --color-purple-a-01: #AA00AA03;
+    --color-purple-a-02: #8000E008;
+    --color-purple-a-03: #8E00F112;
+    --color-purple-a-04: #8D00E51D;
+    --color-purple-a-05: #8000DB2A;
+    --color-purple-a-06: #7A01D03B;
+    --color-purple-a-07: #6D00C350;
+    --color-purple-a-08: #6600C06C;
+    --color-purple-a-09: #5C00ADB1;
+    --color-purple-a-10: #53009EB8;
+    --color-purple-a-11: #52009ABA;
+    --color-purple-a-12: #250049DF;
+
+    --color-dark-01: #121113;
+    --color-dark-02: #1A191B;
+    --color-dark-03: #232225;
+    --color-dark-04: #2B292D;
+    --color-dark-05: #323035;
+    --color-dark-06: #3C393F;
+    --color-dark-07: #49474E;
+    --color-dark-08: #625F69;
+    --color-dark-09: #6F6D78;
+    --color-dark-10: #7C7A85;
+    --color-dark-11: #B5B2BC;
+    --color-dark-12: #EEEEF0;
+
+    --color-dark-alpha-01: #00000000;
+    --color-dark-alpha-02: #F5F4F609;
+    --color-dark-alpha-03: #EBEAF814;
+    --color-dark-alpha-04: #EEE5F81D;
+    --color-dark-alpha-05: #EFE6FE25;
+    --color-dark-alpha-06: #F1E6FD30;
+    --color-dark-alpha-07: #EEE9FF40;
+    --color-dark-alpha-08: #EEE7FF5D;
+    --color-dark-alpha-09: #EAE6FD6E;
+    --color-dark-alpha-10: #ECE9FD7C;
+    --color-dark-alpha-11: #F5F1FFB7;
+    --color-dark-alpha-12: #FDFDFFEF;
+
+    --color-gray-01: #FDFCFD;
+    --color-gray-02: #FAF9FB;
+    --color-gray-03: #F2EFF3;
+    --color-gray-04: #EAE7EC;
+    --color-gray-05: #E3DFE6;
+    --color-gray-06: #DBD8E0;
+    --color-gray-07: #D0CDD7;
+    --color-gray-08: #BCBAC7;
+    --color-gray-09: #8E8C99;
+    --color-gray-10: #84828E;
+    --color-gray-11: #65636D;
+    --color-gray-12: #211F26;
+
+    --color-gray-alpha-01: #55005503;
+    --color-gray-alpha-02: #2B005506;
+    --color-gray-alpha-03: #30004010;
+    --color-gray-alpha-04: #20003618;
+    --color-gray-alpha-05: #20003820;
+    --color-gray-alpha-06: #14003527;
+    --color-gray-alpha-07: #10003332;
+    --color-gray-alpha-08: #08003145;
+    --color-gray-alpha-09: #05001D73;
+    --color-gray-alpha-10: #0500197D;
+    --color-gray-alpha-11: #0400119C;
+    --color-gray-alpha-12: #020008E0;
+
+  --breakpoint-xs: 28rem;
+  --breakpoint-2xl: 100rem;
+  --breakpoint-3xl: 120rem;
+}
+
+.montserrat-regular {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.montserrat-medium {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.montserrat-semibold {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+}
+
+.montserrat-bold {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+}
+
+body {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 16px;
+}
