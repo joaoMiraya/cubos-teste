@@ -6,6 +6,7 @@ interface ButtonProps {
     variant?: "primary" | "secondary";
     disabled?: boolean;
     type?: "button" | "submit" | "reset";
+    class?: string;
 }
 
 export const Button = (props: ButtonProps) => {
@@ -14,7 +15,7 @@ export const Button = (props: ButtonProps) => {
         <button
             type={props.type || "button"}
             disabled={props.disabled}
-            className={`
+            className={`${props.class} 
                 min-w-[64px] min-h-[44px] p-[10px] flex items-center justify-center
                 rounded-[2px] transition-colors text-[16px] font-normal text-[#FFFFFF]
                 ${props.disabled ? "bg-dark-09 cursor-not-allowed" : props.variant === "primary"

@@ -10,6 +10,7 @@ import { NotFound } from "../pages/NotFound.tsx";
 import { ProtectedRoute } from "./protectedRoute.tsx";
 import { AuthProvider } from "../context/authContext.tsx";
 import { ThemeProvider } from "../context/themeContext.tsx";
+import { Detail } from "../pages/detail/Detail.tsx";
 
 const root = document.getElementById("root");
 
@@ -30,6 +31,14 @@ ReactDOM.createRoot(root).render(
                   element={
                     <ProtectedRoute>
                       <Home />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/movie/:id"
+                  element={
+                    <ProtectedRoute>
+                      <Detail />
                     </ProtectedRoute>
                   }
                 />
