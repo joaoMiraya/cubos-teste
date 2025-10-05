@@ -1,4 +1,4 @@
-import { Between, FindOptionsWhere, ILike, LessThanOrEqual, MoreThanOrEqual, Repository, UpdateResult } from 'typeorm';
+import { Between, DeleteResult, FindOptionsWhere, ILike, LessThanOrEqual, MoreThanOrEqual, Repository, UpdateResult } from 'typeorm';
 import { Movie } from '../entities/Movie';
 import { AppDataSource } from '../data-source';
 import { IMovieRepository } from '../interfaces/IMovieRepository';
@@ -75,14 +75,19 @@ export class MovieRepository implements IMovieRepository {
         return this.repository.create(userData);
     }
 
-    async update(id: number, userData: Partial<Movie>): Promise<UpdateResult> {
-        return this.repository.update({ id }, userData);
+    async update(id: number, movieData: Partial<Movie>): Promise<UpdateResult> {
+        const cleanData = Object.fromEntries(
+            Object.entries(movieData).filter(([_, value]) => value !== undefined)
+        );
+
+        return await this.repository.update({ id }, cleanData);
     }
 
-    async delete(id: number): Promise<void> {
-        await this.repository.delete(id);
+
+    async delete(id: number): Promise<DeleteResult> {
+        return await this.repository.delete(id);
     }
-    
+
     async save(user: Movie): Promise<Movie> {
         return await this.repository.save(user);
     }

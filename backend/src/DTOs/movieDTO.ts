@@ -1,5 +1,6 @@
 import { LanguagesEnum } from "../constants/languageEnum";
 import { User } from "../entities/User";
+import { File } from '../entities/File';
 
 export interface CreateMovieDTO {
     title: string;
@@ -16,7 +17,5 @@ export interface CreateMovieDTO {
     revenue: string;
     budget: string;
     user: User;
-    posterUrl?: string;
-    backgroundUrl?: string;
-    trailerUrl?: string;
+    files?: File[];
 }

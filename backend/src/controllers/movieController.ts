@@ -237,6 +237,8 @@ export class MovieController {
   getById = async (req: Request, res: Response): Promise<Response> => {
     try {
       const { id } = req.params;
+      const ownerId = req.userId;
+
       if (isNaN(Number(id))) {
         return res.status(400).json({ error: 'Invalid ID' });
       }
@@ -246,6 +248,10 @@ export class MovieController {
         return res.status(404).json({ error: 'Movie not found' });
       }
       
+      if (movie.user.id !== Number(ownerId)) {
+        return res.status(403).json({ error: 'Access denied' });
+      }
+      
       return res.json(movie);
     }
     catch (error) {
@@ -253,92 +259,146 @@ export class MovieController {
     }
   }
 
-  // delete = async (req: Request, res: Response): Promise<Response> => {
-  //   try {
-  //     const { id } = req.params;
-  //     if (isNaN(Number(id))) {
-  //       return res.status(400).json({ error: 'Invalid ID' });
-  //     }
-
-  //     // Busca o filme para pegar as keys dos arquivos
-  //     const movie = await this.movieService.getById(Number(id));
+  delete = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { id } = req.params;
+      const ownerId = req.userId;
       
-  //     if (movie) {
-  //       // Deleta os arquivos do S3 antes de deletar o filme
-  //       await this.s3UploadService.deleteMovieFiles({
-  //         posterKey: movie.posterKey,
-  //         backdropKey: movie.backdropKey,
-  //         trailerKey: movie.trailerKey,
-  //       });
-  //     }
+      if (isNaN(Number(id))) {
+        return res.status(400).json({ error: 'Invalid ID' });
+      }
 
-  //     await this.movieService.delete(Number(id));
+      const movie = await this.movieService.getById(Number(id));
+      
+      if (!movie) {
+        return res.status(404).json({ error: 'Movie not found' });
+      }
+      if (movie.user?.id !== Number(ownerId)) {
+        return res.status(403).json({ error: 'Unauthorized to delete this movie' });
+      }
 
-  //     return res.status(204).send();
-  //   } catch (error) {
-  //     return res.status(500).json({ error: (error as Error).message });
-  //   }
-  // }
+      const filesToDelete: {
+        posterKey?: string;
+        backdropKey?: string;
+        trailerKey?: string;
+      } = {};
 
-  // update = async (req: Request, res: Response): Promise<Response> => {
-  //   try {
-  //     const { id } = req.params;
-  //     if (isNaN(Number(id))) {
-  //       return res.status(400).json({ error: 'Invalid ID' });
-  //     }
+      if (movie.files && movie.files.length > 0) {
+        const posterFile = movie.files.find(f => f.type === FileEnum.POSTER);
+        const backgroundFile = movie.files.find(f => f.type === FileEnum.BACKGROUND);
+        const trailerFile = movie.files.find(f => f.type === FileEnum.TRAILER);
 
-  //     const movieData = req.body as Partial<CreateMovieDTO>;
-  //     const files = req.files as MulterFiles;
+        if (posterFile?.key) filesToDelete.posterKey = posterFile.key;
+        if (backgroundFile?.key) filesToDelete.backdropKey = backgroundFile.key;
+        if (trailerFile?.key) filesToDelete.trailerKey = trailerFile.key;
+      }
 
-  //     // Busca o filme existente
-  //     const existingMovie = await this.movieService.getById(Number(id));
-  //     if (!existingMovie) {
-  //       return res.status(404).json({ error: 'Movie not found' });
-  //     }
+      await this.movieService.delete(Number(id));
 
-  //     let uploadedFiles;
+      if (Object.keys(filesToDelete).length > 0) {
+        try {
+          await this.s3UploadService.deleteMovieFiles(filesToDelete);
+        } catch (s3Error) {
+          console.error('Error deleting files from S3:', s3Error);
+          return res.status(200).json({ 
+            message: 'Movie deleted, but some files could not be removed from storage',
+            warning: (s3Error as Error).message 
+          });
+        }
+      }
 
-  //     // Se houver novos arquivos, faz upload
-  //     if (files && (files.poster || files.background || files.trailer)) {
-  //       try {
-  //         uploadedFiles = await this.s3UploadService.uploadMovieFiles({
-  //           poster: files.poster?.[0],
-  //           background: files.background?.[0],
-  //           trailer: files.trailer?.[0],
-  //         });
+      return res.status(204).send();
+    } catch (error) {
+      console.error('Delete movie error:', error);
+      return res.status(500).json({ 
+        error: 'Error deleting movie',
+        details: (error as Error).message 
+      });
+    }
+  }
 
-  //         // Deleta os arquivos antigos
-  //         await this.s3UploadService.deleteMovieFiles({
-  //           posterKey: files.poster?.[0] ? existingMovie.posterKey : undefined,
-  //           backdropKey: files.background?.[0] ? existingMovie.backdropKey : undefined,
-  //           trailerKey: files.trailer?.[0] ? existingMovie.trailerKey : undefined,
-  //         });
-  //       } catch (uploadError) {
-  //         return res.status(500).json({ 
-  //           error: 'Error uploading files', 
-  //           details: (uploadError as Error).message 
-  //         });
-  //       }
-  //     }
+  update = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { id } = req.params;
+      const ownerId = req.userId;
+      
+      if (isNaN(Number(id))) {
+        return res.status(400).json({ error: 'Invalid ID' });
+      }
 
-  //     // Atualiza o filme
-  //     const updatedMovie = await this.movieService.update(Number(id), {
-  //       ...movieData,
-  //       ...(uploadedFiles?.posterUrl && { posterUrl: uploadedFiles.posterUrl }),
-  //       ...(uploadedFiles?.backdropUrl && { backdropUrl: uploadedFiles.backdropUrl }),
-  //       ...(uploadedFiles?.trailerUrl && { trailerUrl: uploadedFiles.trailerUrl }),
-  //       ...(uploadedFiles?.posterKey && { posterKey: uploadedFiles.posterKey }),
-  //       ...(uploadedFiles?.backdropKey && { backdropKey: uploadedFiles.backdropKey }),
-  //       ...(uploadedFiles?.trailerKey && { trailerKey: uploadedFiles.trailerKey }),
-  //     });
+      const movieData = req.body as Partial<CreateMovieDTO>;
+      const files = req.files as MulterFiles;
 
-  //     if (updatedMovie.hasErrors()) {
-  //       return res.status(400).json({ errors: updatedMovie.getNotification().getErrors() });
-  //     }
+      const existingMovie = await this.movieService.getById(Number(id));
+      if (!existingMovie) {
+        return res.status(404).json({ error: 'Movie not found' });
+      }
 
-  //     return res.status(200).json(updatedMovie);
-  //   } catch (error) {
-  //     return res.status(500).json({ error: (error as Error).message });
-  //   }
-  // }
+      if (existingMovie.user?.id !== Number(ownerId)) {
+        return res.status(403).json({ error: 'Unauthorized to update this movie' });
+      }
+
+      let uploadedFiles;
+      const filesToDelete: { posterKey?: string; backdropKey?: string; trailerKey?: string } = {};
+
+      // Se houver novos arquivos, faz upload
+      if (files && (files.poster || files.background || files.trailer)) {
+        try {
+          uploadedFiles = await this.s3UploadService.uploadMovieFiles({
+            poster: files.poster?.[0],
+            background: files.background?.[0],
+            trailer: files.trailer?.[0],
+          });
+
+          // Identifica arquivos antigos para deletar
+          if (files.poster?.[0]) {
+            const oldPoster = existingMovie.files.find(f => f.type === FileEnum.POSTER);
+            if (oldPoster) filesToDelete.posterKey = oldPoster.key;
+          }
+          if (files.background?.[0]) {
+            const oldBackground = existingMovie.files.find(f => f.type === FileEnum.BACKGROUND);
+            if (oldBackground) filesToDelete.backdropKey = oldBackground.key;
+          }
+          if (files.trailer?.[0]) {
+            const oldTrailer = existingMovie.files.find(f => f.type === FileEnum.TRAILER);
+            if (oldTrailer) filesToDelete.trailerKey = oldTrailer.key;
+          }
+
+          // Deleta arquivos antigos do S3
+          if (filesToDelete.posterKey || filesToDelete.backdropKey || filesToDelete.trailerKey) {
+            await this.s3UploadService.deleteMovieFiles(filesToDelete);
+          }
+        } catch (uploadError) {
+          return res.status(500).json({ 
+            error: 'Error uploading files', 
+            details: (uploadError as Error).message 
+          });
+        }
+      }
+
+      // Atualiza o filme com os novos dados e arquivos
+      const updatedMovie = await this.movieService.updateMovie(
+        Number(id), 
+        movieData,
+        uploadedFiles
+      );
+
+      // Verifica se houve erros de validação
+      if (updatedMovie.hasErrors && updatedMovie.hasErrors()) {
+        return res.status(400).json({ 
+          errors: updatedMovie.getNotification().getErrors() 
+        });
+      }
+
+      return res.status(200).json(updatedMovie);
+    } catch (error) {
+      console.error('Update movie error:', error);
+      return res.status(500).json({ 
+        error: 'Error updating movie',
+        details: (error as Error).message 
+      });
+    }
+  }
+
+
 }

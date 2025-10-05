@@ -17,7 +17,8 @@ const movieController = new MovieController(movieService, userService, s3Service
 
 movieRouter.get('/', movieController.list);
 movieRouter.get('/:id', movieController.getById);
+movieRouter.put('/:id', movieController.update);
+movieRouter.delete('/:id', movieController.delete);
 movieRouter.post('/', uploadFields, movieController.create);
-//movieRouter.get('/delete/:id', movieController.delete);
 
 export default movieRouter;
