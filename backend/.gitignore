@@ -5,6 +5,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# TypeORM migration files
+# */migrations/*.ts
+# */migrations/*.js
+
 # Build outputs
 dist/
 build/

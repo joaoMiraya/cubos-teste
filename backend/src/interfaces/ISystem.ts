@@ -22,6 +22,12 @@ export interface CorsConfig {
   origins: string[];
 }
 
+export interface AwsConfig {
+  region: string;
+  bucketName: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+}
 export interface Config {
   port: number;
   nodeEnv: NodeEnv;
@@ -29,4 +35,5 @@ export interface Config {
   database: DatabaseConfig;
   jwt: JwtConfig;
   cors: CorsConfig;
+  aws: AwsConfig;
 }

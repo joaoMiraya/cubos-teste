@@ -6,5 +6,6 @@ declare namespace Express {
       email: string;
       role?: string;
     };
+    files?: Express.Multer.File[] | { [fieldname: string]: Express.Multer.File[] };
   }
 }

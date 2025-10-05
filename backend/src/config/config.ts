@@ -66,6 +66,12 @@ const config: Config = {
     refreshSecret: getRequiredEnvVar('JWT_REFRESH_SECRET'),
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   },
+  aws: {
+    region: getRequiredEnvVar('AWS_REGION'),
+    bucketName: getRequiredEnvVar('AWS_BUCKET_NAME'),
+    accessKeyId: getRequiredEnvVar('AWS_ACCESS_KEY_ID'),
+    secretAccessKey: getRequiredEnvVar('AWS_SECRET_ACCESS_KEY'),
+  },
   cors: {
     origins: getCorsOrigins(),
   },
