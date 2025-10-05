@@ -11,41 +11,51 @@ import { ProtectedRoute } from "./protectedRoute.tsx";
 import { AuthProvider } from "../context/authContext.tsx";
 import { ThemeProvider } from "../context/themeContext.tsx";
 import { Detail } from "../pages/detail/Detail.tsx";
+import { MovieProvider } from "../context/movieContext.tsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const root = document.getElementById("root");
 
 if (!root) throw new Error("Failed to find the root element");
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 1000 * 60 * 5,
+    },
+  },
+});
+
 ReactDOM.createRoot(root).render(
   <BrowserRouter>
-    <AuthProvider>
-       <ThemeProvider>
-          <Suspense fallback={<div>Carregando...</div>}>
-            <Routes>
-              <Route path="*" element={<NotFound/>} />
-              <Route path="/" element={<App />}>
-                <Route path="/login" element={<Login/>} />
-                <Route path="/register" element={<Register/>} />
-                <Route
-                  path="/"
-                  element={
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <ThemeProvider>
+          <MovieProvider>
+            <Suspense fallback={<div>Carregando...</div>}>
+              <Routes>
+                <Route path="/" element={<App />}>
+                  <Route index element={
                     <ProtectedRoute>
                       <Home />
                     </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/movie/:id"
-                  element={
+                  } />
+                  <Route path="movie/:id" element={
                     <ProtectedRoute>
                       <Detail />
                     </ProtectedRoute>
-                  }
-                />
-              </Route>
-            </Routes>
-          </Suspense>
-      </ThemeProvider>
-    </AuthProvider>
+                  } />
+                </Route>
+                <Route path="login" element={<Login />} />
+                <Route path="register" element={<Register />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </MovieProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   </BrowserRouter>,
 );

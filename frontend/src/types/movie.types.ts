@@ -23,9 +23,6 @@ export interface MovieFiles {
   url: string;
 }
 
-/*  poster_url: string;
-  background_url: string;
-  trailer_url: string; */
 export interface MovieType {
   id: number;
   userId: number;
@@ -44,4 +41,5 @@ export interface MovieType {
   language: string;
   budget: number;
   revenue: number;
+  created_at: string;
 }

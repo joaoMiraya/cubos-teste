@@ -25,6 +25,10 @@ interface MovieResponse {
   pagination: PaginationData;
 }
 
+export interface UpdateMovieType extends Partial<CreateMovieType> {
+  id: number;
+}
+
 interface MovieContextType {
   movies: MovieType[] | undefined;
   loading: boolean;
@@ -38,6 +42,8 @@ interface MovieContextType {
   nextPage: () => void;
   prevPage: () => void;
   create: (data: CreateMovieType) => Promise<{ success: boolean; error?: string }>;
+  update: (data: UpdateMovieType) => Promise<{ success: boolean; error?: string }>;
+  deleteMovie: (id: number) => Promise<MovieType | null>;
   getById: (id: number) => Promise<MovieType | null>;
   refetch: () => void;
   error: Error | null;
@@ -113,6 +119,61 @@ export function MovieProvider({ children }: { children: React.ReactNode }) {
     },
   });
 
+  const updateMovieMutation = useMutation({
+    mutationFn: async (data: UpdateMovieType) => {
+      const { id, ...movieData } = data;
+      const formData = new FormData();
+
+      // Adiciona apenas os campos que foram fornecidos
+      if (movieData.title) formData.append('title', movieData.title);
+      if (movieData.subtitle) formData.append('subtitle', movieData.subtitle);
+      if (movieData.genres) formData.append('genres', movieData.genres);
+      if (movieData.originalTitle) formData.append('original_title', movieData.originalTitle);
+      if (movieData.synopsis) formData.append('synopsis', movieData.synopsis);
+      if (movieData.releaseDate) formData.append('release_date', String(movieData.releaseDate));
+      if (movieData.ageRating !== undefined) formData.append('age_rating', String(movieData.ageRating));
+      if (movieData.duration !== undefined) formData.append('duration', String(movieData.duration));
+      if (movieData.director) formData.append('director', movieData.director);
+      if (movieData.language) formData.append('language', movieData.language);
+      if (movieData.rating !== undefined) formData.append('rating', String(movieData.rating));
+      if (movieData.budget !== undefined) formData.append('budget', String(movieData.budget));
+      if (movieData.revenue !== undefined) formData.append('revenue', String(movieData.revenue));
+
+      if (movieData.poster) formData.append('poster', movieData.poster);
+      if (movieData.background) formData.append('background', movieData.background);
+      if (movieData.trailer) formData.append('trailer', movieData.trailer);
+
+      const response = await api.put(`/movies/${id}`, formData);
+
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['movies'] });
+    },
+  });
+
+  const getById = useCallback(async (id: number): Promise<MovieType | null> => {
+    try {
+      const response = await api.get(`/movies/${id}`);
+      return response.data;
+    }
+    catch (error) {
+      console.error('Get movie by ID error:', error);
+      return null;
+    }
+  }, []);
+
+  const deleteMovie = useCallback(async (id: number): Promise<MovieType | null> => {
+    try {
+      const response = await api.delete(`/movies/${id}`);
+      return response.data;
+    }
+    catch (error) {
+      console.error('Get movie by ID error:', error);
+      return null;
+    }
+  }, []);
+
   const setFilters = useCallback((newFilters: MovieFilters) => {
     setFiltersState(newFilters);
     setPageState(1);
@@ -164,16 +225,18 @@ export function MovieProvider({ children }: { children: React.ReactNode }) {
     }
   }, [createMovieMutation]);
 
-  const getById = useCallback(async (id: number): Promise<MovieType | null> => {
+  const update = useCallback(async (
+    data: UpdateMovieType
+  ): Promise<{ success: boolean; error?: string }> => {
     try {
-      const response = await api.get(`/movies/${id}`);
-      return response.data;
+      await updateMovieMutation.mutateAsync(data);
+      return { success: true };
+    } catch (error: any) {
+      const message = error.response?.data?.errors?.[0]?.message || 'Erro ao atualizar filme';
+      console.error('Update movie error:', error);
+      return { success: false, error: message };
     }
-    catch (error) {
-      console.error('Get movie by ID error:', error);
-      return null;
-    }
-  }, []);
+  }, [updateMovieMutation]);
 
   const value: MovieContextType = {
     movies: data?.data,
@@ -193,6 +256,8 @@ export function MovieProvider({ children }: { children: React.ReactNode }) {
     nextPage,
     prevPage,
     create,
+    update,
+    deleteMovie,
     getById,
     refetch,
     error,
