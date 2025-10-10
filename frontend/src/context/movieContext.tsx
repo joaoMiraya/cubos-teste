@@ -3,6 +3,7 @@ import { createContext, useCallback, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api.service';
 import type { CreateMovieType, MovieType } from '../types/movie.types';
+import { useAuth } from '../hooks/useAuth';
 
 export interface MovieFilters {
   genre?: string;
@@ -57,6 +58,8 @@ export function MovieProvider({ children }: { children: React.ReactNode }) {
   const [page, setPageState] = useState(1);
   const limit = 4;
 
+  const {isAuthenticated} = useAuth();
+
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['movies', filters, page],
     queryFn: async () => {
@@ -85,6 +88,7 @@ export function MovieProvider({ children }: { children: React.ReactNode }) {
       } as MovieResponse;
     },
     staleTime: 1000 * 60 * 5,
+    enabled: isAuthenticated
   });
 
   const createMovieMutation = useMutation({

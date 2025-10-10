@@ -47,9 +47,9 @@ ReactDOM.createRoot(root).render(
                       <Detail />
                     </ProtectedRoute>
                   } />
+                  <Route path="login" element={<Login />} />
+                  <Route path="register" element={<Register />} />
                 </Route>
-                <Route path="login" element={<Login />} />
-                <Route path="register" element={<Register />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
