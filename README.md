@@ -17,12 +17,6 @@ cd cubos
 ```
 ### 2. 🐳 Rode com Docker (Recomendado)
 ```bash
-# Conceda permissão para o executável criar o .env
-chmod +x make_env.sh
-
-# Execute
-./create_env.sh
-
 # Suba todos os serviços
 docker compose up --build -d
 
